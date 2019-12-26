@@ -1,0 +1,44 @@
+/* 登陆组件 */
+.login{
+    width: 100%;
+    height: 100%;
+    background-image: url("../../../assets/img/login/bg.jpg");
+    background-size: 100% 100%;
+}
+
+/* 子组件--导航栏 */
+.login-header{
+    width: 100%;
+    height: 80px;
+    background-color: #1890ff;
+    display: flex;
+    align-items: center;
+}
+.login-header img{
+    padding: 0 10px;
+}
+.login-header span{
+    font-weight: 300;
+    color: white;
+    line-height: 80px;
+    font-size: 24px;
+}
+
+/* 子组件--表单 */
+
+.form{
+    width: 400px;
+    background-color: white;
+    border-radius: 15px;
+    text-align: center;
+    margin: 0 auto;
+    margin-top: 50px;
+}
+.form-box{
+    width: 300px;
+    margin: 0 auto;
+    padding:25px 0 25px 0;
+}
+.login-form-button{
+    width: 100%;
+}

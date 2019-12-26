@@ -1,0 +1,16 @@
+.nav-title{
+    height: 80px;
+    display: flex;
+    align-items: center;
+    background-color: #002140;
+}
+.nav-title img{
+    width: 40px;
+    height: 40px;
+    margin: 0 15px;
+}
+.nav-title h1{
+    font-size: 24px;
+    color: #ffffff;
+    margin-bottom: 0;
+}
