@@ -1,70 +1,80 @@
-import React,{useEffect,useState} from 'react'
+import React,{useEffect,useState,useMemo} from 'react'
 import logo from '../../../assets/img/logo.png';
 import {Menu,Icon} from 'antd';
 // import ramInfo from '../../../untils/ramInfo/ramInfo';
 import menuList from '../../../config/initMenu';
 import {Link} from 'react-router-dom';
+import {IInfo,IHistory} from "../../../types";
 import "./menu.css";
 
 const { SubMenu } = Menu;
 
-/*定义传入的菜单列表参数*/ 
-interface IInfo{
-    title:string,
-    key:string,
-    icon:string,
-    isPublic?:boolean,
-    children?:any
-}
+const MenuUI:React.FC<IHistory>=({history})=>{
 
-/*获取父级传入的菜单选中值*/ 
-interface IProps{
-    openKey:string,
-    selectKey:string
-}
+    /*获取当前的路由地址*/ 
+    let {pathname} = history.location;
 
-
-const MenuUI:React.FC<IProps>=({openKey,selectKey})=>{
+    /*如果用户直接输入根目录地址进行访问，那么定义比对的路由地址为/home,否则会导致默认菜单选择不正确*/ 
+    const nowPathname = pathname === "/" ? "/home" : pathname;
 
     /*定义一个默认的状态值，用于存储初始化的菜单列表*/
     const [initDom,setInitDom] = useState<null | JSX.Element>(null);
 
-    /*根据传入的菜单信息初始化列表菜单*/
-    const initMenu = (list:any)=>{
-        return list.reduce((pre:JSX.Element[],item:IInfo):JSX.Element[]=>{
-            if(!item.children){
-                pre.push(
-                    <Menu.Item key={item.key}>
-                        <Link to={item.key}>
-                            <Icon type={item.icon} />
-                            <span>{item.title}</span>                        
-                        </Link>
-                    </Menu.Item>
-                )
-            }else{
-                pre.push(
-                <SubMenu
-                    key={item.key}
-                    title={
-                    <span>
-                        <Icon type={item.icon} />
-                        <span>{item.title}</span>
-                    </span>
-                    }
-                >
-                    {initMenu(item.children)}
-                </SubMenu>
-                )
+    /*设置2个state状态值，一个是菜单展开的key，一个是菜单选中的key*/ 
+    const [openKey,setOpenKey] = useState<string>("");
+    const [selectKey,setSelectKey] = useState<string>("");
 
-            }
-            return pre;
-        },[])
-    }
+    /*useMemo在渲染期间就会执行.在这里调用我们的函数获取当前需要选中的菜单项*/
+    useMemo(() => {
+        return (():void=>{
+            menuList.forEach((item:IInfo)=>{
+                if(item.children instanceof Array){
+                    const cItem = item.children.find(c=>c.key === nowPathname);
+                    if(cItem){
+                        /*设置菜单的key*/ 
+                        setOpenKey(item.key);
+                        setSelectKey(cItem.key);
+                    }
+                }else{
+                    (item.key === nowPathname) &&  setSelectKey(item.key);
+                }
+            })
+        })()
+    },[nowPathname]);
 
     /*模板渲染完成后，初始化菜单*/
     useEffect(() => {
-        const init = initMenu(menuList);
-        setInitDom(init);
+        const initMenu = ((list:any)=>{
+            return list.reduce((pre:JSX.Element[],item:IInfo):JSX.Element[]=>{
+                if(!item.children){
+                    pre.push(
+                        <Menu.Item key={item.key}>
+                            <Link to={item.key}>
+                                <Icon type={item.icon} />
+                                <span>{item.title}</span>                        
+                            </Link>
+                        </Menu.Item>
+                    )
+                }else{
+                    pre.push(
+                    <SubMenu
+                        key={item.key}
+                        title={
+                        <span>
+                            <Icon type={item.icon} />
+                            <span>{item.title}</span>
+                        </span>
+                        }
+                    >
+                        {initMenu(item.children)}
+                    </SubMenu>
+                    )
+    
+                }
+                return pre;
+            },[])
+        })
+        setInitDom(initMenu(menuList));
     }, [])
 
     return (

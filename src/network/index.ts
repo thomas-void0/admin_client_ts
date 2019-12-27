@@ -1,17 +1,22 @@
 import Ajax from './ajax';
 import jsonp from 'jsonp';
 import {message} from 'antd';
+import {IPWeather} from '../types/request-types';
 
 /*登陆请求*/ 
-export const reqLogin = (username:string,password:string)=>{
+export const reqLogin =(username:string,password:string):Promise<any>=>{
     return Ajax("/login",{username,password},"POST")
 }
 
-interface IPWeather{
-    dayPictureUrl:string,
-    weather:string
+/*请求分类数据*/ 
+export const reqCategorys = (parentId:string):Promise<any>=>{
+    return Ajax("/manage/category/list",{parentId},"GET");
 }
 
+/*修改分类数据*/ 
+export const reqCategoryUpdate = (categoryId:string,categoryName:string)=>{
+    return Ajax("/manage/category/update",{categoryId,categoryName},"POST");
+}
 /*天气api的jsonp请求*/ 
 export const reqWeather = (city:string):Promise<IPWeather>=>{
     const url:string =`http://api.map.baidu.com/telematics/v3/weather?location=${city}&output=json&ak=3p49MVra6urFRGOT9s8UBWr2`;
