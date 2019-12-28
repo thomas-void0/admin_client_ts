@@ -22,3 +22,14 @@ export interface CategoryData{
 export interface IHistory{
     history:any,
 }
+
+/*传入的表单控件*/ 
+export interface IFormProps{
+    getFieldDecorator:(value1:string,value2:IFormPropsValue2)=>any,
+    categoryName?:string
+}
+
+export interface IFormPropsValue2{
+    initialValue?:string,
+    rules:{ required: boolean; message: string; }[]
+}

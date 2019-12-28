@@ -1,17 +1,10 @@
 import React from 'react';
 import { Form,Input} from 'antd';
+import {IFormProps} from "../../../types";
 
-interface IProps{
-    getFieldDecorator:(value1:string,value2:Value2)=>any,
-    categoryName:string
-}
 
-interface Value2{
-    initialValue?:string,
-    rules:{ required: boolean; message: string; }[]
-}
 
-const Update:React.FC<IProps> = ({getFieldDecorator,categoryName})=>{
+const Update:React.FC<IFormProps> = ({getFieldDecorator,categoryName})=>{
     return (
         <Form>
             <Form.Item>
