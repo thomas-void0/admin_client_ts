@@ -65,12 +65,12 @@ const Header:React.FC<IHistory>=({history})=>{
         return (():void=>{
             menuList.forEach((item:IInfo)=>{
                 if(item.children instanceof Array){
-                    const cItem = item.children.find(c=>c.key.indexOf(pathname) !== -1);
+                    const cItem = item.children.find(c=>pathname.indexOf(c.key) !== -1);
                     /*设置需要显示的标题*/ 
                     cItem && setNavTitle(cItem.title);
                 }else{
                     /*设置需要显示的标题*/ 
-                    (item.key.indexOf(pathname) !== -1) && setNavTitle(item.title);
+                    (pathname.indexOf(item.key) !== -1) && setNavTitle(item.title);
                 }
     
             })

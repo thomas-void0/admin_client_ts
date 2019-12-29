@@ -18,9 +18,24 @@ export const reqCategoryUpdate = (categoryId:string,categoryName:string):Promise
     return Ajax("/manage/category/update",{categoryId,categoryName},"POST");
 }
 
+//更新商品的状态，上架/下架
+export const reqUpdateStatus = (productId:string,status:number):Promise<any>=>{
+    return Ajax("/manage/product/updateStatus",{productId,status},"POST")
+}
+
 /*添加分类*/
 export const reqCategoryAdd = (parentId:string,categoryName:string):Promise<any>=>{
     return Ajax("/manage/category/add",{parentId,categoryName},"POST")
+}
+
+/*请求商品数据*/ 
+export const reqProducts =(pageNum:number,pageSize:number):Promise<any>=>{
+    return Ajax("/manage/product/list",{pageNum,pageSize},"GET")
+}
+
+/*搜索商品分页列表*/
+export const reqSearchProducts = (pageNum:number,pageSize:number,searchName:string,searchType:string):Promise<any>=>{
+    return Ajax("/manage/product/search",{pageNum,pageSize,[searchType]:searchName},"GET")
 }
 
 /*天气api的jsonp请求*/ 

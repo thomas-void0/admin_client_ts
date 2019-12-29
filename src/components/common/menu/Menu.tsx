@@ -29,14 +29,14 @@ const MenuUI:React.FC<IHistory>=({history})=>{
         return (():void=>{
             menuList.forEach((item:IInfo)=>{
                 if(item.children instanceof Array){
-                    const cItem = item.children.find(c=>c.key === nowPathname);
+                    const cItem = item.children.find(c=>nowPathname.indexOf(c.key) !== -1);
                     if(cItem){
                         /*设置菜单的key*/ 
                         setOpenKey(item.key);
                         setSelectKey(cItem.key);
                     }
                 }else{
-                    (item.key === nowPathname) &&  setSelectKey(item.key);
+                    (nowPathname.indexOf(item.key) !== -1) &&  setSelectKey(item.key);
                 }
             })
         })()

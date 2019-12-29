@@ -141,7 +141,6 @@ const Category:React.FC<IProps>=({form})=>{
                 }else{
                     parentId = preParentId;
                 }
-                console.log("parentID==>",parentId);
                 const {categoryName} = values;
                 const result:IAdd = await reqCategoryAdd(parentId,categoryName);
                 if(result.data.status === 0){
