@@ -122,11 +122,7 @@ const Category:React.FC<IProps>=({form})=>{
             </Button>
         )
     }
-    /*下拉框选择*/ 
-    const handleSelectChange= (value:string):void=>{
-        if(value){
-        }
-    }
+
     /*添加模态框点击确定*/ 
     const [preParentId, setPreParentId] = useState<string>("");
     const addCategoryUpdate = ()=>{
@@ -235,7 +231,6 @@ const Category:React.FC<IProps>=({form})=>{
                 >
                     <Add 
                     getFieldDecorator={getFieldDecorator}
-                    handleSelectChange={handleSelectChange}
                     categorys={categorys}
                     nowPage={nowPage}
                     />

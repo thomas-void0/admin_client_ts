@@ -1,4 +1,4 @@
-import React,{useState,useEffect, useMemo} from 'react'
+import React,{useState,useEffect} from 'react'
 import { 
     Card,
     Table,
@@ -19,7 +19,7 @@ const { Option } = Select;
 /*定义路由接口*/ 
 interface IFrom{
     history:{
-        push:(vlaue:string)=>void
+        push:(vlaue1:string,value2?:any)=>void
     }
 }
 
@@ -73,26 +73,21 @@ const ProductHome:React.FC<IFrom> = ({history})=>{
     /*对商品进行上架下架*/ 
     const [pageNum,setPageNum] = useState<number>(1);
 
-    console.log("pageNUmnow----------->",pageNum);
-    
-    const updateStatus =  (product:any)=>{
-        console.log("prdocut===>",product);
-        console.log(" pageNUM==>",pageNum);
+    const updateStatus = async (product:IData)=>{
+        let {_id,status} = product;
+        status === 1 ? status = 0 : status = 1;
+        const result = await reqUpdateStatus(_id,status);
+        if(result.data.status === 0){
+            getProducts(pageNum);//请求当前页面的数据
+            message.success(`商品${status === 1 ? '上' : "下"}架成功`);
+        }
+    }
 
-        // let {_id,status} = product;
-        // status === 1 ? status = 0 : status = 1;
-        // const result = await reqUpdateStatus(_id,status);
-        // if(result.data.status === 0){
-        //     getProducts(pageNum);//请求当前页面的数据
-        //     message.success(`商品${status === 1 ? '上' : "下"}架成功`);
-        // }
-    }
-    // ======================================拿不到最新的状态值=======================================>
-    /*初始化表格列的数组*/
     // 点击修改
-    const changeInfo = (product:any)=>{
-        console.log("----------------",pageNum);
+    const changeInfo = (product:IData)=>{
+        console.log("----------------",product);
     }
+    /*初始化表格列的数组*/
     const initColumns = ()=>{
         return [
             {
@@ -112,7 +107,7 @@ const ProductHome:React.FC<IFrom> = ({history})=>{
             {
                 title: '状态',
                 width:100,
-                render:(product:any)=> {
+                render:(product:IData)=> {
                     const {status} = product;
                     return(
                         <span>
@@ -129,10 +124,10 @@ const ProductHome:React.FC<IFrom> = ({history})=>{
             {
                 title: '操作',
                 width:100,
-                render:(product:any)=> {
+                render:(product:IData)=> {
                     return(
                         <span>
-                            <SlotButton /*onClick={()=>history.push("/products/product/detail",product)}*/ >详情</SlotButton>
+                            <SlotButton onClick={()=>history.push("/products/product/detail",product)} >详情</SlotButton>
                             <SlotButton onClick={()=>{changeInfo(product)}}>修改</SlotButton>
                         </span>
                     )
@@ -140,9 +135,6 @@ const ProductHome:React.FC<IFrom> = ({history})=>{
             },
         ];
     }
-    const [columns] = useState<any[]>(initColumns());
-    //==========================================拿不到最新的状态值=====================================>
-
 
     /*数据处理函数*/ 
     const handleData = (data:IData[]):void=>{
@@ -155,7 +147,6 @@ const ProductHome:React.FC<IFrom> = ({history})=>{
     const [total,setTotal] = useState<number>(0);
     /*请求商品数据*/ 
     const getProducts = async (pageNum:number)=>{
-        console.log("pageNum1111111==>",pageNum);
         let result:IResult;
         if(keyWords !== ""){ //有关键词 说明是搜索
             result = await reqSearchProducts(pageNum,PAGE_SIZE,keyWords,searchType);
@@ -174,20 +165,18 @@ const ProductHome:React.FC<IFrom> = ({history})=>{
     }
     /*当页码发生改变的时候*/ 
     const getProductInfo = (nowPage:number):void=>{
-        console.log("nowpage-<",nowPage);
+        setPageNum(nowPage);
         getProducts(nowPage);
-        setPageNum(nowPage); //将页码设置为当前的页码
-        console.log("执行了嘛");
-
     }
     useEffect(() => {
         getProducts(1);
     }, [])
+    
     return (
         <Card title={title} extra={initBtnDom}>
             <Table
                 rowKey="_id"
-                columns={columns} //表格选项
+                columns={initColumns()} //表格选项
                 dataSource={data} //表格数据
                 bordered
                 loading={loading} //加载效果

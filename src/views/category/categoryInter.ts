@@ -43,6 +43,6 @@ export interface ICategory{
 
 /*下拉框接口*/ 
 export interface ISelect {
-    handleSelectChange:(value:string)=>void,
+    // handleSelectChange:(value:string)=>void,
     categorys:ICategory[],
 }

@@ -20,12 +20,44 @@ export interface IResult {
             pages:number,
             total:number
         },
-        status:number
+        status:number,
+        msg?:string
     },
 }
 /*事件对象接口*/ 
 export interface IEvent{
     target:{
-        value:string
+        value:string,
     }
+}
+
+/*商品详情props接口*/ 
+export interface IDetailProps{
+    history:{
+        goBack:()=>void,
+        location:{
+            state:IData
+        }
+    }
+}
+/*商品初始化列表数据*/
+export interface IDetailData{
+    key:string,
+    value:any
+}
+
+/*定义添加分类返回的数据*/ 
+export interface IAdd{
+    data:{
+        status:number,
+        data:IAddData[],
+        msg?:string 
+    }
+}
+
+export interface IAddData{
+    parentId:string,
+    _id:string,
+    name:string,
+    __v:number,
 }

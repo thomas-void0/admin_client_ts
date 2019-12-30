@@ -38,6 +38,16 @@ export const reqSearchProducts = (pageNum:number,pageSize:number,searchName:stri
     return Ajax("/manage/product/search",{pageNum,pageSize,[searchType]:searchName},"GET")
 }
 
+/*根据id获取分类*/
+export const reqGetCategory = (categoryId:string):Promise<any>=>{
+    return Ajax("/manage/category/info",{categoryId},"GET")
+}
+
+//删除图片
+export const reqDeleteImg = (name:string):Promise<any> =>{
+    return Ajax('/manage/img/delete',{name},"POST");
+}
+
 /*天气api的jsonp请求*/ 
 export const reqWeather = (city:string):Promise<IPWeather>=>{
     const url:string =`http://api.map.baidu.com/telematics/v3/weather?location=${city}&output=json&ak=3p49MVra6urFRGOT9s8UBWr2`;

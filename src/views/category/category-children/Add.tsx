@@ -11,7 +11,7 @@ interface IProps extends IFormProps{
     nowPage:number
 }
 
-const Add:React.FC<ISelect & IProps> = ({nowPage,categorys,getFieldDecorator,handleSelectChange})=> {
+const Add:React.FC<ISelect & IProps> = ({nowPage,categorys,getFieldDecorator})=> {
     return (
         <Form>    
             {nowPage === 1 ? (
@@ -20,9 +20,7 @@ const Add:React.FC<ISelect & IProps> = ({nowPage,categorys,getFieldDecorator,han
                     initialValue:'一级分类',
                     rules: [{ required: true, message: '请选择你需要添加的分类' }],
                 })(
-                <Select
-                    onChange={handleSelectChange}
-                >
+                <Select>
                     {
                         categorys.reduce((pre:JSX.Element[],item:ICategory,index:number)=>{
                             pre.push(

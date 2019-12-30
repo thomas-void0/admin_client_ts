@@ -1,0 +1,13 @@
+
+.product-detail .left>span:first-child{
+    font-weight: bold;
+    font-size: 16px;
+    margin-left: 12px;   
+    margin-right: 10px;   
+}
+.product-detail .left span .product-img{
+    width: 120px;
+    height: 120px;
+    border: 1px solid black;
+    margin-right: 10px;
+}
