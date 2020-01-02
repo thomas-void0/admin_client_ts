@@ -8,6 +8,17 @@ export interface IInfo{
     isPublic?:boolean,
     children?:any
 }
+/*商品添加*/
+export interface IProduct{
+    _id?:string,
+    categoryId:string,
+    pCategoryId:string,
+    name:string,
+    desc:string,
+    price:string,
+    detail:string,
+    imgs:string[]
+}
 
 /*分类的每一项参数*/ 
 export interface CategoryData{

@@ -15,9 +15,10 @@ const getBase64=(file:any):Promise<any>=>{
 /*接口*/ 
 interface IProps{
     getImgs:(value:any[])=>void;
+    imgs:string[]
 }
 
-const PictureWall2:React.FC<IProps> = ({getImgs})=>{
+const PictureWall2:React.FC<IProps> = ({getImgs,imgs})=>{
     const [previewVisible, setPreviewVisible] = useState<boolean>(false) 
     const [previewImage, setPreviewImage] = useState<string>("") 
     const [fileList, setFileList] = useState<any[]>([]);
@@ -59,6 +60,10 @@ const PictureWall2:React.FC<IProps> = ({getImgs})=>{
         })
         getImgs(imgsValue);//父组件拿到子组件中的图片数组
     };
+    //检查图片列表是否为空
+    const isCheckImgArr = (images:string[]):boolean=>{
+        return JSON.stringify(images) !== "[]"
+    }
     const uploadButton = (
       <div>
         <Icon type="plus" />
@@ -72,7 +77,7 @@ const PictureWall2:React.FC<IProps> = ({getImgs})=>{
                 accept="image/*"/*只接收图片格式*/
                 name="image"/*请求参数名*/
                 listType="picture-card" /*卡片样式*/
-                fileList={fileList}/*所有已上传图片文件对象的数组*/
+                fileList={ isCheckImgArr(imgs) && !isCheckImgArr(fileList)  ?  imgs : fileList}/*所有已上传图片文件对象的数组*/
                 onPreview={handlePreview}/*显示对应图片的大图*/
                 onChange={handleChange}/*上传文件改变时的状态*/
             >

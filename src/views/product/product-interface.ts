@@ -61,3 +61,11 @@ export interface IAddData{
     name:string,
     __v:number,
 }
+
+/*添加商品表单收集到的值*/ 
+export interface IAddValues{
+    categoryIds:string[],
+    desc:string,
+    name:string,
+    price:string
+}

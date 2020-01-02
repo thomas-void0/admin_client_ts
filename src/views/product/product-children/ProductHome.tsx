@@ -1,4 +1,4 @@
-import React,{useState,useEffect} from 'react'
+import React,{useState,useEffect,useRef} from 'react'
 import { 
     Card,
     Table,
@@ -23,7 +23,9 @@ interface IFrom{
     }
 }
 
+
 const ProductHome:React.FC<IFrom> = ({history})=>{
+    const refBox = useRef<any>(1);
     /*初始化添加按钮*/ 
     const initAddProduct = ():JSX.Element=>{
         return (
@@ -78,14 +80,16 @@ const ProductHome:React.FC<IFrom> = ({history})=>{
         status === 1 ? status = 0 : status = 1;
         const result = await reqUpdateStatus(_id,status);
         if(result.data.status === 0){
-            getProducts(pageNum);//请求当前页面的数据
+            console.log("refBox.current===>",refBox.current);
+            getProducts(refBox.current);//请求当前页面的数据
             message.success(`商品${status === 1 ? '上' : "下"}架成功`);
         }
     }
 
     // 点击修改
     const changeInfo = (product:IData)=>{
-        console.log("----------------",product);
+        // 跳转到add页面 然后修改样式
+        history.push("/products/product/add",product)
     }
     /*初始化表格列的数组*/
     const initColumns = ()=>{
@@ -135,6 +139,7 @@ const ProductHome:React.FC<IFrom> = ({history})=>{
             },
         ];
     }
+    const [columns] = useState<any[]>(initColumns())
 
     /*数据处理函数*/ 
     const handleData = (data:IData[]):void=>{
@@ -165,6 +170,7 @@ const ProductHome:React.FC<IFrom> = ({history})=>{
     }
     /*当页码发生改变的时候*/ 
     const getProductInfo = (nowPage:number):void=>{
+        refBox.current = nowPage;
         setPageNum(nowPage);
         getProducts(nowPage);
     }
@@ -176,7 +182,7 @@ const ProductHome:React.FC<IFrom> = ({history})=>{
         <Card title={title} extra={initBtnDom}>
             <Table
                 rowKey="_id"
-                columns={initColumns()} //表格选项
+                columns={columns} //表格选项
                 dataSource={data} //表格数据
                 bordered
                 loading={loading} //加载效果
