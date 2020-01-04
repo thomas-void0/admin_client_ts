@@ -1,8 +1,9 @@
 import Ajax from './ajax';
 import jsonp from 'jsonp';
 import {message} from 'antd';
-import {IPWeather} from '../types/request-types';
+import {IPWeather,IAddUser} from '../types/request-types';
 import {IProduct} from "../types"
+
 
 /*登陆请求*/ 
 export const reqLogin =(username:string,password:string):Promise<any>=>{
@@ -50,9 +51,33 @@ export const reqDeleteImg = (name:string):Promise<any> =>{
 }
 
 //添加商品
-export const reqAddOrUpdateProduct = (product:IProduct)=>{
+export const reqAddOrUpdateProduct = (product:IProduct):Promise<any> =>{
     return Ajax("/manage/product/"+(product._id ? "update" : "add"),product,"POST")
 }
+
+//请求用户数据
+export const reqGetUser = ():Promise<any> =>{
+    return Ajax('/manage/user/list',null,"GET")
+}
+//删除用户
+export const reqDeleteUser = (userId:string):Promise<any> =>{
+    return Ajax("/manage/user/delete",{userId},"POST")
+}
+//添加用户
+export const reqAddUser = ({username,password,phone,email,role_id}:IAddUser):Promise<any>=>{
+    return Ajax("/manage/user/add",{username,password,phone,email,role_id},"POST")
+}
+
+// 获取所有角色的列表
+export const reqGetRoles = ():Promise<any> =>{
+    return Ajax('/manage/role/list',null,"GET")
+}
+
+//修改用户
+export const reqUpdateUser = ({username,_id,phone,email,role_id}:IAddUser):Promise<any>=>{
+    return Ajax("/manage/user/update",{username,_id,phone,email,role_id},"POST")
+}
+
 /*天气api的jsonp请求*/ 
 export const reqWeather = (city:string):Promise<IPWeather>=>{
     const url:string =`http://api.map.baidu.com/telematics/v3/weather?location=${city}&output=json&ak=3p49MVra6urFRGOT9s8UBWr2`;

@@ -5,3 +5,12 @@ export interface IPWeather{
     dayPictureUrl:string,
     weather:string
 }
+
+export interface IAddUser{
+    username:string,
+    password?:string,
+    phone:string,
+    email:string,
+    role_id:string
+    _id?:string
+}
