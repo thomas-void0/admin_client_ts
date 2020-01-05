@@ -14,3 +14,10 @@ export interface IAddUser{
     role_id:string
     _id?:string
 }
+// 设置角色权限
+export interface ISetRoleAuth {
+    _id:string,
+    menus:string[],
+    auth_time:number,
+    auth_name:string
+}

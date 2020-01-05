@@ -7,3 +7,11 @@ export interface IRoles{
     name:string,
     _id:string
 }
+
+// 当前选中的角色
+export interface IRole{
+    menus:string[],
+    _id:string,
+    name:string,
+    create_time:number
+}

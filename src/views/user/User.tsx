@@ -81,11 +81,7 @@ const User:React.FC<any>=()=>{
                         nowAlluserInfo.push(data);
                     }else{
                         nowAlluserInfo = [...userInfo].filter((cItem:IUserInfo | any)=>{
-                            if(cItem._id ===data._id){
-                                Object.keys(cItem).forEach((key:string)=>{ //将对应键值对进行更新
-                                    cItem[key] = data[key];
-                                })
-                            }
+                            cItem._id ===data._id && Object.keys(cItem).forEach((key:string)=>cItem[key] = data[key])
                             return cItem
                         });
                     }

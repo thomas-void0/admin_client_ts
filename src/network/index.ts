@@ -1,7 +1,7 @@
 import Ajax from './ajax';
 import jsonp from 'jsonp';
 import {message} from 'antd';
-import {IPWeather,IAddUser} from '../types/request-types';
+import {IPWeather,IAddUser,ISetRoleAuth} from '../types/request-types';
 import {IProduct} from "../types"
 
 
@@ -68,14 +68,25 @@ export const reqAddUser = ({username,password,phone,email,role_id}:IAddUser):Pro
     return Ajax("/manage/user/add",{username,password,phone,email,role_id},"POST")
 }
 
+//修改用户
+export const reqUpdateUser = ({username,_id,phone,email,role_id}:IAddUser):Promise<any>=>{
+    return Ajax("/manage/user/update",{username,_id,phone,email,role_id},"POST")
+}
+
 // 获取所有角色的列表
 export const reqGetRoles = ():Promise<any> =>{
     return Ajax('/manage/role/list',null,"GET")
 }
 
-//修改用户
-export const reqUpdateUser = ({username,_id,phone,email,role_id}:IAddUser):Promise<any>=>{
-    return Ajax("/manage/user/update",{username,_id,phone,email,role_id},"POST")
+// 添加角色
+export const reqAddRole = (roleName:string):Promise<any>=>{
+    return Ajax("/manage/role/add",{roleName},"POST")
+}
+
+
+//赋予角色权限
+export const reqGetAuth = ({_id,menus,auth_time,auth_name}:ISetRoleAuth):Promise<any>=>{
+    return Ajax("/manage/role/update",{_id,menus,auth_time,auth_name},"POST")
 }
 
 /*天气api的jsonp请求*/ 
