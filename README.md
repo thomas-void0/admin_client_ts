@@ -4,7 +4,7 @@
 
 本项目是基于typeScript + react-hooks搭建的一款后台管理系统demo。
 
-****项目启动说明:**
+**项目启动说明:**
 
 1. 安装mongodb，并且启动mongodb服务。
 2. 下载node后台代码。[**后台代码地址**](https://github.com/lmxyjy/admin_final)
