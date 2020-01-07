@@ -69,3 +69,20 @@ export interface IAddValues{
     name:string,
     price:string
 }
+// 级联选择器
+export interface IOption{
+    value: string,
+    label: string,
+    isLeaf: boolean,
+    key:number,
+    children?:IOption[]
+}
+
+/*定义添加分类返回的数据*/ 
+export interface ICategorys{
+    data:{
+        status:number,
+        data:IAddData[],
+        msg?:string        
+    }
+}

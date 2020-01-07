@@ -10,11 +10,11 @@ import {
 } from 'antd'
 import SlotButton from '../../../components/common/slot-button/SlotButton';
 import {reqCategorys} from "../../../network";
-import {IAdd,IAddData,IAddValues} from "../product-interface";
+import {IAdd,IAddData,IAddValues,IOption,ICategorys} from "../product-interface";
 import PictureWall from './PictureWall';
 import RichTextEditor from '../product-children/RichTextEditor';
 import {reqAddOrUpdateProduct} from "../../../network"
-import {IProduct} from "../../../types"
+import {IProduct} from "../../../types";
 
 
 const {Item} = Form;
@@ -28,6 +28,7 @@ interface IProps{
 const ProductAdd:React.FC<IProps> = ({form,history})=>{
     const {state} = history.location;
     const [productInfo] = useState<IProduct>(state || "") //得到修改按钮点击时传递过来的值
+    const [categoryIds] = useState<Array<string>>(state ? [state.pCategoryId,state.categoryId] : []);
     /*输入框在容器中所占用的位置*/
     const formItemLayout = {
         labelCol: { span: 2 },
@@ -46,22 +47,24 @@ const ProductAdd:React.FC<IProps> = ({form,history})=>{
         }
     }
 
-    /*初始化一级菜单*/
-    const [_options, set_options] = useState<any>([]);
-    const [placeFlag, setplaceFlag] = useState<boolean>(false);
-    const initOptions = (dataArr:IAddData[])=>{
-        const newOptions = dataArr.filter((item:IAddData,index:number)=>{
-            return{
+    // 处理级联选择器的数据
+    const hanleOptions = (array:IAddData[],flag:boolean = true):Array<IOption>=>{
+        return array.reduce((pre:IOption[],item:IAddData,index:number)=>{
+            pre.push({
                 value: item._id,
                 label: item.name,
-                isLeaf: false,
-                key:index
-            }
-        });
-        set_options(newOptions);
-        setplaceFlag(placeFlag)
+                isLeaf: flag,
+                key:index  
+            });
+            return pre;
+        },[])
     }
-
+    /*初始化一级菜单*/
+    const [_options,set_options] = useState<any>([]);
+    const initOptions = (dataArr:IAddData[])=>{
+        const newOptions = hanleOptions(dataArr,false);
+        set_options(newOptions);
+    }
     /*请求数据*/ 
     const getCategorys = async (parentId:string)=>{
         const result:IAdd = await reqCategorys(parentId);
@@ -95,18 +98,35 @@ const ProductAdd:React.FC<IProps> = ({form,history})=>{
             setDisplayImgs(imgs);
         }
     },[])
+
+    // 查找需要被更新的分类对象
+    const checkNewOptions = (targetOption:IOption,children?:IOption[]):Array<IOption>=>{
+         return [..._options].reduce((pre:IOption[],item:IOption)=>{
+            if(item.value === targetOption.value && children){
+                item.children = children; //有子分类的情况
+            }else if(item.value === targetOption.value){
+                item.isLeaf = true; //说明没有子分类
+            }
+            pre.push(item);
+            return pre;
+        },[])
+    }
     const loadData = async (selectedOptions:any) => {
         const targetOption = selectedOptions[0]; //得到当前选择的项
         targetOption.loading = true;
-
         // 在这里发起数据请求
-        // const result = await reqCategorys();
-
+        const result:ICategorys = await reqCategorys(targetOption.value);
         targetOption.loading = false;
-        // setOption([...options]);
-
+        const {data,status} = result.data;
+        if(status === 0 && data.length > 0){//说明有二级分类
+            const children = hanleOptions(data,true);
+            set_options(checkNewOptions(targetOption,children));
+        }else if(status === 0){ //没有二级分类
+            set_options(checkNewOptions(targetOption));
+        }else{
+            message.error(result.data.msg)
+        }
     };
-
     /*用于和表单进行双向绑定*/
     const {getFieldDecorator} = form;
     /*返回上一级*/ 
@@ -115,7 +135,6 @@ const ProductAdd:React.FC<IProps> = ({form,history})=>{
     }
     /*得到子组件传递过来的图片数组*/ 
     const [imgs, setImgs] = useState<string[]>([]);
-
     const getImgs = (value:string[])=>{
         setImgs(value);
     }
@@ -141,8 +160,8 @@ const ProductAdd:React.FC<IProps> = ({form,history})=>{
                 name,
                 price
             }=values;
-            const pCategoryId = "5dac66b8b485702028557b55";
-            const categoryId = "5dac6edbb485702028557b60";
+            const pCategoryId = categoryIds[0];
+            const categoryId = categoryIds[1];
             const detail = refRichTextEditor.current.getDetail();//得到富文本编辑器编辑后的文本
             product = {desc,name,price,pCategoryId,categoryId,imgs,detail}
             if(productInfo){ //说明是点击修改跳转过来的
@@ -159,8 +178,6 @@ const ProductAdd:React.FC<IProps> = ({form,history})=>{
             
         })
     }
-
-
 
     return (
         <Card title={title}>
@@ -195,15 +212,15 @@ const ProductAdd:React.FC<IProps> = ({form,history})=>{
                 </Item>
                 <Item  label="商品分类">
                 {getFieldDecorator("categoryIds",{
-                        initialValue:[],
-                        // rules:[
-                        //     {required:true,message:"分类不能为空"},
-                        // ]
+                        initialValue:categoryIds,
+                        rules:[
+                            {required:true,message:"分类不能为空"},
+                        ]
                     })(
                     <Cascader
                         options={_options}
                         loadData={loadData}
-                        placeholder={placeFlag ? "请选择分类" : "呵呵"}
+                        placeholder={"请选择分类"}
                 />
                 )}
                 </Item>
