@@ -55,62 +55,73 @@ const ProductAdd:React.FC<IProps> = ({form,history})=>{
                 label: item.name,
                 isLeaf: flag,
                 key:index  
-            });
+            });  
             return pre;
         },[])
     }
-    /*初始化一级菜单*/
-    const [_options,set_options] = useState<any>([]);
-    const initOptions = (dataArr:IAddData[])=>{
-        const newOptions = hanleOptions(dataArr,false);
-        set_options(newOptions);
-    }
-    /*请求数据*/ 
-    const getCategorys = async (parentId:string)=>{
-        const result:IAdd = await reqCategorys(parentId);
-        const {data} = result;
-        if(data.status === 0){ 
-            if(parentId === "0"){ //说明请求的是一级分类
-                initOptions(data.data);
-            }else{
-                console.log("二级列表");
-            }
-        }else{
-            message.error(`数据请求失败${data.msg}`);
-        }
-
-    }
-    const [displayImgs,setDisplayImgs] = useState<any[]>([]);
-    const [detail,setDeatail] = useState<string>("");
-    useEffect(()=>{
-        getCategorys("0")
-        if(productInfo){
-            const imgs = productInfo.imgs.reduce((pre:any,item:any,index:number)=>{
-                pre[index] = {
-                    uid: `-${index}`,/*每个file都是自己唯一的id*/
-                    name: 'image.png',/*图片文件名*/
-                    status: 'done',/*图片状态 done-已上传*/
-                    url: `http://localhost:5000/upload/${item}`,
-                }
-                return pre;
-            },[])
-            setDeatail(productInfo.detail);
-            setDisplayImgs(imgs);
-        }
-    },[])
-
     // 查找需要被更新的分类对象
-    const checkNewOptions = (targetOption:IOption,children?:IOption[]):Array<IOption>=>{
-         return [..._options].reduce((pre:IOption[],item:IOption)=>{
-            if(item.value === targetOption.value && children){
+    const checkNewOptions = (value:string,children?:IOption[]):Array<IOption>=>{
+        return [..._options].reduce((pre:IOption[],item:IOption)=>{
+            if(item.value === value && children){
                 item.children = children; //有子分类的情况
-            }else if(item.value === targetOption.value){
+            }else if(item.value === value){
                 item.isLeaf = true; //说明没有子分类
             }
             pre.push(item);
             return pre;
         },[])
     }
+    /*初始化一级菜单*/
+    const [_options,set_options] = useState<any>([]);
+    /*请求数据*/ 
+    const [displayImgs,setDisplayImgs] = useState<any[]>([]);
+    const [detail,setDeatail] = useState<string>("");
+
+    useEffect(()=>{
+        if(productInfo){ 
+            (async ()=>{ //说明是跳转过来进行修改的内容
+                const {pCategoryId} = productInfo;
+                const response = await Promise.all([reqCategorys("0"),reqCategorys(pCategoryId)]);
+                const parentResult = response[0].data;
+                const childrenResult = response[1].data;
+                if(parentResult.status === 0 && childrenResult.status === 0){
+                    const handleParentData = hanleOptions(parentResult.data,false);
+                    if(childrenResult.data.length > 0){
+                        const handleChildrenData = hanleOptions(childrenResult.data,true);//处理子数组数据
+                        const targetOption = handleParentData.find((cItem:IOption)=>cItem.value === pCategoryId);
+                        targetOption!.children = handleChildrenData;
+                    }
+                    set_options(handleParentData);
+                }else{
+                    message.error("数据请求出错")
+                }
+                const imgs = productInfo.imgs.reduce((pre:any,item:any,index:number)=>{
+                    pre[index] = {
+                        uid: `-${index}`,/*每个file都是自己唯一的id*/
+                        name: 'image.png',/*图片文件名*/
+                        status: 'done',/*图片状态 done-已上传*/
+                        url: `http://localhost:5000/upload/${item}`,
+                    }
+                    return pre;
+                },[])
+                setDeatail(productInfo.detail);
+                setDisplayImgs(imgs);
+            })()
+        }else{
+            (async ()=>{
+                const result:IAdd = await reqCategorys("0");
+                const {data} = result;
+                if(data.status === 0){ 
+                    set_options(hanleOptions(data.data,false)); //设置初始化的级联选择器数据
+                }else{
+                    message.error(`数据请求失败${data.msg}`);
+                }
+            })()
+        }
+    },[])
+
+
+
     const loadData = async (selectedOptions:any) => {
         const targetOption = selectedOptions[0]; //得到当前选择的项
         targetOption.loading = true;
@@ -120,9 +131,9 @@ const ProductAdd:React.FC<IProps> = ({form,history})=>{
         const {data,status} = result.data;
         if(status === 0 && data.length > 0){//说明有二级分类
             const children = hanleOptions(data,true);
-            set_options(checkNewOptions(targetOption,children));
+            set_options(checkNewOptions(targetOption.value,children));
         }else if(status === 0){ //没有二级分类
-            set_options(checkNewOptions(targetOption));
+            set_options(checkNewOptions(targetOption.value));
         }else{
             message.error(result.data.msg)
         }

@@ -20,7 +20,9 @@ const ProductDetail:React.FC<IDetailProps> = ({history})=>{
         detail,
         imgs,
         price
-    }=history.location.state
+    }=history.location.state;
+
+    console.log("============>",pCategoryId,"===========>",categoryId);
 
     /*请求分类*/ 
     const [firstCategory, setFirstCategory] = useState<string>("");
