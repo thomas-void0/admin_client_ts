@@ -39,3 +39,7 @@
 **项目开发过程中遇到的一些问题：**
 
 [**项目练习记录：react-hooks中遇到的一些问题**](https://lmxyjy.github.io/react-hooks%E4%B8%AD%E7%9A%84%E4%B8%80%E4%BA%9B%E9%97%AE%E9%A2%98/)
+
+**项目目录结构:**
+
+![项目目录结构](src/assets/img/pages.png)
